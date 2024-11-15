@@ -6,7 +6,7 @@
 /*   By: bdenfir <bdenfir@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/30 16:45:53 by bdenfir           #+#    #+#             */
-/*   Updated: 2024/10/01 22:04:36 by bdenfir          ###   ########.fr       */
+/*   Updated: 2024/11/13 14:26:17 by bdenfir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,31 +104,31 @@ char	*get_next_line(int fd)
 	return (line);
 }
 
-// int	main(int argc, char **argv)
-// {
-// 	int		fd;
-// 	char	*line;
+int	main(int argc, char **argv)
+{
+	int		fd;
+	char	*line;
 
-// 	if (argc != 2)
-// 	{
-// 		printf("Usage: %s <filename>\n", argv[0]);
-// 		return (1);
-// 	}
+	if (argc != 2)
+	{
+		printf("Usage: %s <filename>\n", argv[0]);
+		return (1);
+	}
 
-// 	fd = open(argv[1], O_RDONLY);
-// 	if (fd < 0)
-// 	{
-// 		printf("Error opening file\n");
-// 		return (1);
-// 	}
+	fd = open(argv[1], O_RDONLY);
+	if (fd < 0)
+	{
+		printf("Error opening file\n");
+		return (1);
+	}
 
-// 	line = get_next_line(fd);
-// 	while (line)
-// 	{
-// 		printf("%s", line);
-// 		free(line);
-// 		line = get_next_line(fd);
-// 	}
-// 	close(fd);
-// 	return (0);
-// }
+	line = get_next_line(fd);
+	while (line)
+	{
+		printf("%s", line);
+		free(line);
+		line = get_next_line(fd);
+	}
+	close(fd);
+	return (0);
+}

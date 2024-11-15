@@ -6,7 +6,7 @@
 /*   By: bdenfir <bdenfir@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 19:29:23 by bdenfir           #+#    #+#             */
-/*   Updated: 2024/09/27 22:52:03 by bdenfir          ###   ########.fr       */
+/*   Updated: 2024/11/15 18:35:35 by bdenfir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@ void	ft_lstiter(t_list *lst, void (*f)(void *))
 	t_list	*node;
 
 	node = lst;
+	if (!lst || !f)
+		return ;
 	while (node->next != NULL)
 	{
 		f(node->content);

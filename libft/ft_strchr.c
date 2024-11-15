@@ -6,7 +6,7 @@
 /*   By: bdenfir <bdenfir@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 19:13:41 by bdenfir           #+#    #+#             */
-/*   Updated: 2024/09/30 21:32:46 by bdenfir          ###   ########.fr       */
+/*   Updated: 2024/11/15 16:00:43 by bdenfir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,13 +17,14 @@ char	*ft_strchr(const char *s, int c)
 	int		i;
 
 	i = 0;
+	c = (unsigned char)c;
 	while (s[i])
 	{
 		if (s[i] == (char) c)
 			return ((char *)(s + i));
 		i++;
 	}
-	if (!c)
+	if (c == '\0')
 		return ((char *)(s + i));
 	return (NULL);
 }

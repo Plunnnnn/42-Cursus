@@ -6,7 +6,7 @@
 /*   By: bdenfir <bdenfir@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 19:13:34 by bdenfir           #+#    #+#             */
-/*   Updated: 2024/09/26 20:32:04 by bdenfir          ###   ########.fr       */
+/*   Updated: 2024/11/15 14:17:20 by bdenfir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,6 @@
 
 void	ft_putchar_fd(char c, int fd)
 {
-	if (c)
+	if (ft_isascii(c) && fd)
 		write(fd, &c, 1);
 }

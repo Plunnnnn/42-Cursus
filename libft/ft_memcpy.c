@@ -6,7 +6,7 @@
 /*   By: bdenfir <bdenfir@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 19:13:31 by bdenfir           #+#    #+#             */
-/*   Updated: 2024/09/28 22:47:07 by bdenfir          ###   ########.fr       */
+/*   Updated: 2024/11/15 15:37:55 by bdenfir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,8 @@ void	*ft_memcpy(void *dest, const void *src, size_t n)
 	char				*strd;
 	char				*srcd;
 
+	if (!dest && !src)
+		return (NULL);
 	strd = (char *)dest;
 	srcd = (char *)src;
 	i = -1;
