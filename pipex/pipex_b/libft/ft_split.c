@@ -41,7 +41,7 @@ static	void	fill_tab(char *tab, char const *s, char c)
 	tab[i] = '\0';
 }
 
-static void	fill_rslt(char **rslt, char const *s, char c)
+static int	fill_rslt(char **rslt, char const *s, char c)
 {
 	size_t		i;
 	size_t		j;
@@ -58,7 +58,7 @@ static void	fill_rslt(char **rslt, char const *s, char c)
 		{
 			rslt[j] = malloc (sizeof(char) * (count + 1));
 			if (!rslt[j])
-				return ;
+				return (1);
 			fill_tab(rslt[j], &s[i], c);
 			j++;
 			i += count;
@@ -67,7 +67,20 @@ static void	fill_rslt(char **rslt, char const *s, char c)
 			i++;
 	}
 	rslt[j] = 0;
-	return ;
+	return (0);
+}
+
+void	free_rslt(char **rslt)
+{
+	int	i;
+
+	i = 0;
+	while (rslt[i])
+	{
+		free(rslt[i]);
+		i++;
+	}
+	free(rslt);
 }
 
 char	**ft_split(char const *s, char c)
@@ -79,6 +92,7 @@ char	**ft_split(char const *s, char c)
 	rslt = malloc(sizeof(char *) * (words + 1));
 	if (!rslt)
 		return (0);
-	fill_rslt(rslt, s, c);
+	if (fill_rslt(rslt, s, c) == 1)
+		free_rslt(rslt);
 	return (rslt);
 }

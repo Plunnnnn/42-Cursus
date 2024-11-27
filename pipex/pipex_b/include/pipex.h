@@ -23,21 +23,22 @@
 
 typedef struct s_pipex
 {
-	int		infile;
-	int		outfile;
-	int		pipe_fd[2];
-	pid_t   **pids;
-
-}				t_pipex;
+    int     infile;
+    int     outfile;
+    int     pipe_fd[2][2];
+    pid_t   *pids;
+    int     pipe_count;
+	int		nb_cmd;
+} t_pipex;
 
 void	parse_commande(char **argv);
 char	*find_executable(char *cmd, char **envp);
-pid_t	*fork_child(t_pipex *data, char **argv, char **envp, int nb_cmd);
+pid_t	fork_child(t_pipex *data, char **argv, char **envp, int nb_cmd);
 void	pipe_redirection(int nb_cmd, t_pipex *data);
 void	create_pipe(t_pipex *data);
-void	error_exit(char *str, pid_t **pids);
+void	error_exit(char *str, t_pipex *data);
 void	clean_data(t_pipex *data);
-void wait_pid(pid_t **pids, int nb_cmd);
+void	wait_pid(pid_t **pids, int nb_cmd);
 void	free_args(char **args);
 char	*create_path(char **paths, char *cmd);
 void	pipe_redirection(int nb_cmd, t_pipex *data);

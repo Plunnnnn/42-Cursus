@@ -1,13 +1,13 @@
 /* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   utils2.c                                           :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: bdenfir <bdenfir@student.42.fr>            +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/04 16:40:33 by bdenfir           #+#    #+#             */
-/*   Updated: 2024/10/05 15:52:14 by bdenfir          ###   ########.fr       */
-/*                                                                            */
+/*																			*/
+/*														:::	  ::::::::   */
+/*   utils2.c										   :+:	  :+:	:+:   */
+/*													+:+ +:+		 +:+	 */
+/*   By: bdenfir <bdenfir@student.42.fr>			+#+  +:+	   +#+		*/
+/*												+#+#+#+#+#+   +#+		   */
+/*   Created: 2024/10/04 16:40:33 by bdenfir		   #+#	#+#			 */
+/*   Updated: 2024/10/05 15:52:14 by bdenfir		  ###   ########.fr	   */
+/*																			*/
 /* ************************************************************************** */
 
 #include "pipex.h"
@@ -40,18 +40,32 @@ char	*find_executable(char *cmd, char **envp)
 	return (0);
 }
 
-void	pipe_redirection(int nb_cmd, t_pipex *data)
+void    pipe_redirection(int nb_cmd, t_pipex *data)
 {
-	if (nb_cmd == 0)
-	{
-		dup2(data->infile, STDIN_FILENO);
-		dup2(data->pipe_fd[1], STDOUT_FILENO);
-	}
-	else
-	{
-		dup2(data->pipe_fd[0], STDIN_FILENO);
-		dup2(data->outfile, STDOUT_FILENO);
-	}
-	close(data->pipe_fd[0]);
-	close(data->pipe_fd[1]);
+    int    i;
+
+    if (nb_cmd == 0)
+    {
+        dup2(data->infile, STDIN_FILENO);
+        dup2(data->pipe_fd[0][1], STDOUT_FILENO);
+    }
+    else if (nb_cmd == data->pipe_count)
+    {
+        dup2(data->pipe_fd[nb_cmd - 1][0], STDIN_FILENO);
+        dup2(data->outfile, STDOUT_FILENO);
+    }
+    else
+    {
+        dup2(data->pipe_fd[nb_cmd - 1][0], STDIN_FILENO);
+        dup2(data->pipe_fd[nb_cmd][1], STDOUT_FILENO);
+    }
+    i = 0;
+    while (i < data->nb_cmd)
+    {
+        close(data->pipe_fd[i][0]);
+        close(data->pipe_fd[i][1]);
+        i++;
+    }
+    close(data->infile);
+    close(data->outfile);
 }
