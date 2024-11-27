@@ -23,6 +23,8 @@ char	*find_executable(char *cmd, char **envp)
 	while (ft_strnstr(envp[i], "PATH", 4) == 0)
 		i++;
 	paths = ft_split(envp[i] + 5, ':');
+	if (!paths || !*paths)
+		return (NULL);
 	i = -1;
 	while (paths[++i])
 	{
