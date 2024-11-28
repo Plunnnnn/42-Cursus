@@ -42,5 +42,7 @@ void	wait_pid(pid_t **pids, int nb_cmd);
 void	free_args(char **args);
 char	*create_path(char **paths, char *cmd);
 void	pipe_redirection(int nb_cmd, t_pipex *data);
+void    handle_here_doc(char *limiter, t_pipex *data);
+int     get_next_line(char **line);
 
 #endif

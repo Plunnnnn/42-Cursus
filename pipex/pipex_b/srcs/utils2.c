@@ -42,32 +42,86 @@ char	*find_executable(char *cmd, char **envp)
 	return (0);
 }
 
-void    pipe_redirection(int nb_cmd, t_pipex *data)
+void	pipe_redirection(int nb_cmd, t_pipex *data)
 {
-    int    i;
+	int	i;
 
-    if (nb_cmd == 0)
+	if (nb_cmd == 0)
+	{
+		dup2(data->infile, STDIN_FILENO);
+		dup2(data->pipe_fd[0][1], STDOUT_FILENO);
+	}
+	else if (nb_cmd == data->pipe_count)
+	{
+		dup2(data->pipe_fd[nb_cmd - 1][0], STDIN_FILENO);
+		dup2(data->outfile, STDOUT_FILENO);
+	}
+	else
+	{
+		dup2(data->pipe_fd[nb_cmd - 1][0], STDIN_FILENO);
+		dup2(data->pipe_fd[nb_cmd][1], STDOUT_FILENO);
+	}
+	i = 0;
+	while (i < data->nb_cmd)
+	{
+		close(data->pipe_fd[i][0]);
+		close(data->pipe_fd[i][1]);
+		i++;
+	}
+	close(data->infile);
+	close(data->outfile);
+}
+
+void handle_here_doc(char *limiter, t_pipex *data)
+{
+    char *line;
+    int here_doc_pipe[2];
+
+    if (pipe(here_doc_pipe) < 0)
+        error_exit("Failed to create here_doc pipe", data);
+        
+    while (1)
     {
-        dup2(data->infile, STDIN_FILENO);
-        dup2(data->pipe_fd[0][1], STDOUT_FILENO);
+        write(STDOUT_FILENO, "heredoc> ", 9);
+        if (get_next_line(&line) <= 0)
+            break;
+        if (ft_strncmp(line, limiter, ft_strlen(limiter)) == 0 &&
+            line[ft_strlen(limiter)] == '\n')
+        {
+            free(line);
+            break;
+        }
+        write(here_doc_pipe[1], line, ft_strlen(line));
+        write(here_doc_pipe[1], "\n", 1);  // Add newline after each input line
+        free(line);
     }
-    else if (nb_cmd == data->pipe_count)
-    {
-        dup2(data->pipe_fd[nb_cmd - 1][0], STDIN_FILENO);
-        dup2(data->outfile, STDOUT_FILENO);
-    }
-    else
-    {
-        dup2(data->pipe_fd[nb_cmd - 1][0], STDIN_FILENO);
-        dup2(data->pipe_fd[nb_cmd][1], STDOUT_FILENO);
-    }
-    i = 0;
-    while (i < data->nb_cmd)
-    {
-        close(data->pipe_fd[i][0]);
-        close(data->pipe_fd[i][1]);
-        i++;
-    }
-    close(data->infile);
-    close(data->outfile);
+        
+    close(here_doc_pipe[1]);
+    data->infile = here_doc_pipe[0];
+}
+
+int	get_next_line(char **line)
+{
+	char	*buffer;
+	int		i;
+	int		r;
+	char	c;
+
+	i = 0;
+	r = 0;
+	buffer = (char *)malloc(10000);
+	if (!buffer)
+		return (-1);
+	r = read(0, &c, 1);
+	while (r && c != '\n' && c != '\0')
+	{
+		if (c != '\n' && c != '\0')
+			buffer[i] = c;
+		i++;
+		r = read(0, &c, 1);
+	}
+	buffer[i] = '\n';
+	buffer[++i] = '\0';
+	*line = buffer;
+	return (r);
 }
