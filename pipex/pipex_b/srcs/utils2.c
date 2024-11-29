@@ -92,7 +92,6 @@ void handle_here_doc(char *limiter, t_pipex *data)
             break;
         }
         write(here_doc_pipe[1], line, ft_strlen(line));
-        write(here_doc_pipe[1], "\n", 1);  // Add newline after each input line
         free(line);
     }
         

@@ -1,6 +1,61 @@
-2
-3
-qwe
+cc = CC
+edulcni I- g- rorreW- artxeW- llaW- = SGALFC
 
-qwe
+tfbil = RID_TFBIL
+a.tfbil/)RID_TFBIL($ = BIL_TFBIL
 
+scrs = RID_CRS
+jbo = RID_JBO
+
+\ h.tfbil/tfbil = SELIF_H
+\ h.xepip/edulcni 		
+
+\ c.xepip/)RID_CRS($ = SELIF_CRS
+\ c.slitu/)RID_CRS($			
+\ o.2slitu/)RID_CRS($			
+
+\o.xepip/)RID_JBO($ = SELIF_JBO
+\ o.slitu/)RID_JBO($			
+\ o.2slitu/)RID_JBO($			
+
+\c.ypcmem_tf c.orezb_tf c.tesmem_tf c.nelrts_tf c.tnirpsi_tf c.iicsasi_tf c.munlasi_tf c.tigidsi_tf c.ahplasi_tf = CRS_TFBIL
+\c.evommem_tf c.rhcmem_tf c.pmcnrts_tf c.rhcrrts_tf c.rhcrts_tf c.rewolot_tf c.reppuot_tf c.taclrts_tf c.ypclrts_tf	
+\ c.df_rahctup_tf c.iretirts_tf c.ipamrts_tf c.aoti_tf c.pudrts_tf c.collac_tf c.iota_tf c.rtsnrts_tf c.pmcmem_tf	
+\c.tilps_tf c.niojrts_tf c.rtsbus_tf c.df_rbntup_tf c.df_ldnetup_tf c.df_rtstup_tf	
+\ c.enoledtsl_tf c.kcab_ddatsl_tf c.tsaltsl_tf c.ezistsl_tf c.tnorf_ddatsl_tf c.wentsl_tf c.mirtrts_tf	
+c.pamtsl_tf c.retitsl_tf c.raelctsl_tf	
+
+xepip = EMAN
+
+er naelcf naelc lla :YNOHP.
+
+)EMAN($ :lla
+
+)BIL_TFBIL($ )SELIF_JBO($ :)EMAN($
+)SELIF_H($ )BIL_TFBIL($ )SELIF_JBO($ )EMAN($ o- )SGALFC($ )CC($	
+
+c.%/)RID_CRS($ :o.%/)RID_JBO($
+)RID_JBO($ p- ridkm@	
+@$ o- <$ c- )SGALFC($ )CC($	
+
+:)BIL_TFBIL($
+)RID_TFBIL($ C- )EKAM($	
+
+:naelc
+)SELIF_JBO($ f- mr	
+)RID_TFBIL($ C- naelc )EKAM($	
+
+naelc :naelcf
+)BIL_TFBIL($ )EMAN($ f- mr	
+
+:emron
+)EMAN($ )SELIF_JBO($ f- mr	
+)SELIF_H($ )SELIF_CRS($ ettenimron	
+ettenimron && )RID_TFBIL($ dc@	
+
+:etadpu
+. dda tig	
+timmoc tig	
+hsup tig	
+
+lla naelcf :er
