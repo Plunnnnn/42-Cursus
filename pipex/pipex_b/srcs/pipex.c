@@ -1,13 +1,13 @@
 /* ************************************************************************** */
-/*									  */
-/*							:::	 ::::::::   */
-/*   pipex.c											:+:   :+:	:+:   */
-/*						  +:+ +:+	   +:+	*/
-/*   By: bdenfir <bdenfir@student.42.fr>			+#+  +:+	   +#+	*/
-/*						+#+#+#+#+#+   +#+	 */
-/*   Created: 2024/10/04 16:10:26 by bdenfir		   #+#  #+#		  */
-/*   Updated: 2024/11/27 22:14:31 by bdenfir		  ###   ########.fr	*/
-/*									  */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   pipex.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: bdenfir <bdenfir@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/12/04 15:26:07 by bdenfir           #+#    #+#             */
+/*   Updated: 2024/12/04 16:52:18 by bdenfir          ###   ########.fr       */
+/*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
@@ -27,98 +27,109 @@ void	free_args(char **args)
 	free(args);
 }
 
-t_pipex *init_data(char *file1, char *file2, pid_t *pids, int nb_cmd, int here_doc)
+void	execute(char *cmd, char **envp)
 {
-	t_pipex *data;
-	int  i;
+	char	**args;
+	char	*cmd_path;
 
-	data = malloc(sizeof(t_pipex));
-	if (!data)
-		error_exit("memory allocation failed", NULL);
-		
-	data->nb_cmd = nb_cmd;
-	data->infile = -1;
-	data->outfile = -1;
-	i = 0;
-	while (i < nb_cmd)
+	args = ft_split(cmd, ' ');
+	cmd_path = NULL;
+	if (!args || !args[0])
 	{
-		data->pipe_fd[i][0] = -1;
-		data->pipe_fd[i][1] = -1;
-		i++;
+		free_args(args);
+		error_exit("Error: Command not found", 127);
 	}
-	data->pids = pids;
-	data->pipe_count = nb_cmd - 1;
-	if (!here_doc)
+	if (ft_strchr(args[0], '/') != NULL)
 	{
-		data->infile = open(file1, O_RDONLY);
-		data->outfile = open(file2, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+		execve(args[0], args, envp);
+		free_args(args);
+		error_exit("Error executing command", 126);
 	}
-	else
-		data->outfile = open(file2, O_WRONLY | O_CREAT | O_APPEND, 0644);
-	if ((!here_doc && data->infile < 0) || data->outfile < 0)
-		error_exit("Error opening files", data);
-	return (data);
+	cmd_path = find_executable(args[0], envp);
+	if (!cmd_path)
+	{
+		free_args(args);
+		error_exit("Error: Command not found", 127);
+	}
+	execve(cmd_path, args, envp);
+	ft_norme(args, cmd_path, 127);
 }
 
-pid_t	fork_child(t_pipex *data, char **argv, char **envp, int nb_cmd)
+void	child_process(char *argv, char **envp, int pipe_in, int pipe_out)
 {
 	pid_t	pid;
-	char	*cmd;
-	char	**args;
 
-	args = ft_split(argv[(nb_cmd + 2) + (argv[1][0] == 'h') ], ' ');
-	if (args)
-		cmd = find_executable(args[0], envp);
-	else
-		cmd = NULL;
 	pid = fork();
-	if (pid < 0)
-		error_exit("Error creating fork/child process", data);
+	if (pid == -1)
+		error_exit("Error creating child process", 1);
 	if (pid == 0)
 	{
-		pipe_redirection(nb_cmd, data);
-		if (execve(cmd, args, envp) == -1)
+		if (pipe_in != STDIN_FILENO)
 		{
-			free_args(args);
-			free(cmd);
-			error_exit("exec", data);
+			dup2(pipe_in, STDIN_FILENO);
+			close(pipe_in);
 		}
+		if (pipe_out != STDOUT_FILENO)
+		{
+			dup2(pipe_out, STDOUT_FILENO);
+			close(pipe_out);
+		}
+		execute(argv, envp);
 	}
-	free_args(args);
-	free(cmd);
-	return (pid);
+	else
+	{
+		close(pipe_out);
+		waitpid(pid, NULL, 0);
+	}
 }
 
-int main(int argc, char **argv, char **envp)
+void	here_doc(char *limiter, int argc)
 {
-	t_pipex *data;
-	pid_t   *pids;
-	int  i;
-	int  here_doc;
+	pid_t	reader;
+	int		fd[2];
 
-	here_doc = (argc > 1 && ft_strncmp(argv[1], "here_doc", 8) == 0);
-	if ((!here_doc && argc < 5) || (here_doc && argc < 6))
-		error_exit("Invalid argument\nUsage: ./pipex file1 cmd1 cmd2 file2\n	   ./pipex here_doc LIMITER cmd1 cmd2 file2", NULL);
-	pids = malloc(sizeof(pid_t) * (argc - (3 + here_doc)));
-	if (!pids)
-		error_exit("Memory allocation for pids array failed", NULL);
-	if (!envp || !*envp)
-		error_exit("Environment variable is NULL", NULL);
-		
-	data = init_data(argv[1], argv[argc - 1], pids, argc - (3 + here_doc), here_doc);
-	if (here_doc)
-		handle_here_doc(argv[2], data);
-	create_pipe(data);
-		
-	i = -1;
-	while (++i < argc - (3 + here_doc))
+	if (argc < 6)
+		error_exit("Usage: ./pipex here_doc limiter cmd1 cmd2 _ cmdn file2", 1);
+	if (pipe(fd) == -1)
+		error_exit("pipe error", 1);
+	reader = fork();
+	if (reader == -1)
+		error_exit("fork error", 1);
+	if (reader == 0)
+		handle_here_doc(fd, limiter);
+	else
 	{
-		pids[i] = fork_child(data, argv, envp, i);
+		close(fd[1]);
+		dup2(fd[0], STDIN_FILENO);
+		close(fd[0]);
+		wait(NULL);
 	}
-		
-	clean_data(data);
-	wait_pid(&pids, argc - (3 + here_doc));
-	free(pids);
-	free(data);
+}
+
+int	main(int argc, char **argv, char **envp)
+{
+	int	hd;
+	int	fileout;
+	int	start;
+
+	if (argc < 5)
+		error_exit("Usage: ./pipex file1 cmd1 cmd2 ... cmdn file2", 1);
+	hd = ft_strncmp(argv[1], "here_doc", 8) == 0;
+	if (hd)
+	{
+		here_doc(argv[2], argc);
+		start = 3;
+		fileout = open_file(argv[argc - 1], 01 | 0100 | 02000, 0644);
+	}
+	else
+	{
+		start = 2;
+		dup2(open_file(argv[1], O_RDONLY, 0), STDIN_FILENO);
+		fileout = open_file(argv[argc - 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	}
+	process_cmds(argc, argv, envp, start);
+	dup2(fileout, STDOUT_FILENO);
+	close(fileout);
+	execute(argv[argc - 2], envp);
 	return (0);
 }

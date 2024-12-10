@@ -3,57 +3,63 @@
 /*                                                        :::      ::::::::   */
 /*   push_swap.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bdenfir <bdenfir@student.42.fr>            +#+  +:+       +#+        */
+/*   By: bdenfir <bdenfir@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/08 12:53:23 by bdenfir           #+#    #+#             */
-/*   Updated: 2024/10/12 19:32:24 by bdenfir          ###   ########.fr       */
+/*   Created: 2024/12/09 15:25:10 by bdenfir           #+#    #+#             */
+/*   Updated: 2024/12/10 14:47:20 by bdenfir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PUSH_SWAP_H
 # define PUSH_SWAP_H
 
-# include <unistd.h>
 # include <stdio.h>
 # include <stdlib.h>
+# include <unistd.h>
+# include <limits.h>
+# include <../libft/libft.h>
 
-typedef struct s_stack
-{
-	int				content;
-	char			stack;
-	struct s_stack	*next;
-	struct s_stack	*previous;
-}				t_stack;
+typedef struct t_stack {
+	int	*data;
+	int	top;
+	int	capacity;
+}		t_stack;
 
-//STACKS METHODS
-void	swap(t_stack **stack);
-void	push(t_stack **a, t_stack **b);
-void	rotate(t_stack	**stack);
-void	r_rotate(t_stack **stack);
-void	change_stack(t_stack *node);
-int		is_stack_sorted(t_stack *stack);
+void	sa(t_stack *a);
+void	pa(t_stack *a, t_stack *b);
+void	ra(t_stack *a);
+void	rra(t_stack *a);
 
-//ARGS METHODS
-int		coordinate_compression(int *arr, int size, int *compressed);
-t_stack	*parse_argv_to_stack(int argc, char **argv);
+void	sb(t_stack *b);
+void	pb(t_stack *a, t_stack *b);
+void	rb(t_stack *b);
+void	rrb(t_stack *b);
 
-//UTILITIES
-//void	print_stack(t_stack *stack);
-t_stack	*create_node(int content);
-int		ft_atoi(const char *str);
-void	free_stack(t_stack **stack);
+int		parse_value(char *arg, long *parsed, int *count);
+int		process_arg(char **arg_ptr, long *parsed, int *count);
+int		process_argv(char *arg, long *parsed, int *count);
+void	copy_elements(long *parsed, long **elements, int count);
+int		parse_arguments(int argc, char *argv[], long **elements);
+int		validate_arguments(int argc, char *argv[]);
+int		is_valid_argument(const char *arg);
+int		check_uniqueness(long *parsed, int count);
+int		check_range(long *elements, int count);
 
-//INTEGRITY
-int		duplicate(int array[], int size);
-int		check_null(int array[], int size);
+t_stack	*init_stack(int capacity);
+void	push(t_stack *stack, int value);
+int		pop(t_stack *stack);
+int		peek(t_stack *stack);
+int		is_empty(t_stack *stack);
+int		is_sorted(t_stack *stack);
 
-//SORTING
-void	binary_radix_sort(t_stack **a, t_stack **b, int max_value);
-int		stack_size(t_stack *stack);
-void	partition_by_bit(t_stack **a, t_stack **b, int bit_pos);
+void	normalize_elements(long *elements, int size);
 
-//BINARY
-int		bit_length(unsigned int n);
-int		get_bit(int num, int bit_pos);
+void	free_all(long *elements, t_stack *a, t_stack *b);
+void	error_exit(void);
+
+void	sort_it(t_stack *a, t_stack *b, long *elements, int size);
+void	sort_four(t_stack *a, t_stack *b);
+void	sort_five(t_stack *a, t_stack *b);
+void	sort_three(t_stack *a);
 
 #endif

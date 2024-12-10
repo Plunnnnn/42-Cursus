@@ -16,17 +16,17 @@ BONUS_OBJECTS = $(BONUS_FILES:.c=.o)
 all: $(NAME)
 
 $(NAME): $(OBJS)
-	ar rc $(NAME) $(OBJS)
+	@ar rc $(NAME) $(OBJS)
 
 clean:
-	rm -rf $(OBJS)
-	rm -rf $(BONUS_OBJECTS)
+	@rm -rf $(OBJS)
+	@rm -rf $(BONUS_OBJECTS)
 
 bonus : $(BONUS_OBJECTS)
 	@ar r $(NAME) $^
 
 fclean: clean
-	rm -rf $(NAME)
+	@rm -rf $(NAME)
 
 re: fclean all
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bdenfir <bdenfir@student.42.fr>            +#+  +:+       +#+        */
+/*   By: bdenfir <bdenfir@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/30 16:45:53 by bdenfir           #+#    #+#             */
-/*   Updated: 2024/11/13 14:26:17 by bdenfir          ###   ########.fr       */
+/*   Updated: 2024/11/20 15:52:48 by bdenfir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,6 @@ char	*get_file(int fd, char *resultat)
 	char	*new_resultat;
 	int		bytes;
 
-	if (!resultat)
-		resultat = ft_calloc(1, 1);
 	temp_buff = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
 	if (!temp_buff)
 		return (NULL);
@@ -40,7 +38,7 @@ char	*get_file(int fd, char *resultat)
 	return (resultat);
 }
 
-char	*get_line(char *buffer)
+static char	*get_line(char *buffer)
 {
 	char	*line;
 	int		i;
@@ -96,39 +94,46 @@ char	*get_next_line(int fd)
 
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
-	buffer = get_file(fd, buffer);
+	if (!buffer)
+		buffer = ft_calloc(1, 1);
 	if (!buffer)
 		return (NULL);
+	buffer = get_file(fd, buffer);
+	if (!buffer)
+	{
+		free(buffer);
+		return (NULL);
+	}
 	line = get_line(buffer);
 	buffer = get_next(buffer);
 	return (line);
 }
 
-int	main(int argc, char **argv)
-{
-	int		fd;
-	char	*line;
+// int	main(int argc, char **argv)
+// {
+// 	int		fd;
+// 	char	*line;
 
-	if (argc != 2)
-	{
-		printf("Usage: %s <filename>\n", argv[0]);
-		return (1);
-	}
+// 	if (argc != 2)
+// 	{
+// 		printf("Usage: %s <filename>\n", argv[0]);
+// 		return (1);
+// 	}
 
-	fd = open(argv[1], O_RDONLY);
-	if (fd < 0)
-	{
-		printf("Error opening file\n");
-		return (1);
-	}
+// 	fd = open(argv[1], O_RDONLY);
+// 	if (fd < 0)
+// 	{
+// 		printf("Error opening file\n");
+// 		return (1);
+// 	}
 
-	line = get_next_line(fd);
-	while (line)
-	{
-		printf("%s", line);
-		free(line);
-		line = get_next_line(fd);
-	}
-	close(fd);
-	return (0);
-}
+// 	line = get_next_line(fd);
+// 	while (line)
+// 	{
+// 		printf("%s", line);
+// 		free(line);
+// 		line = get_next_line(fd);
+// 	}
+// 	close(fd);
+// 	return (0);
+// }

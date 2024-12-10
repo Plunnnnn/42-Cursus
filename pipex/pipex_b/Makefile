@@ -25,32 +25,33 @@ LIBFT_SRC = ft_isalpha.c ft_isdigit.c ft_isalnum.c ft_isascii.c ft_isprint.c ft_
 	ft_strtrim.c ft_lstnew.c ft_lstadd_front.c ft_lstsize.c ft_lstlast.c ft_lstadd_back.c ft_lstdelone.c \
 	ft_lstclear.c ft_lstiter.c ft_lstmap.c
 
-NAME = pipex
+NAME = ../pipex
 
 .PHONY: all clean fclean re
 
 all: $(NAME)
 
 $(NAME): $(OBJ_FILES) $(LIBFT_LIB)
-	$(CC) $(CFLAGS) -o $(NAME) $(OBJ_FILES) $(LIBFT_LIB) $(H_FILES)
+	@echo "Compiling $(NAME)..."
+	@$(CC) $(CFLAGS) -o $(NAME) $(OBJ_FILES) $(LIBFT_LIB)
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	@mkdir -p $(OBJ_DIR)
-	$(CC) $(CFLAGS) -c $< -o $@
+	@$(CC) $(CFLAGS) -c $< -o $@
 
 $(LIBFT_LIB):
-	$(MAKE) -C $(LIBFT_DIR)
+	@$(MAKE) -C $(LIBFT_DIR)
 
 clean:
-	rm -f $(OBJ_FILES)
-	$(MAKE) clean -C $(LIBFT_DIR)
+	@rm -rf $(OBJ_DIR)
+	@$(MAKE) clean -C $(LIBFT_DIR)
 
 fclean: clean
-	rm -f $(NAME) $(LIBFT_LIB)
+	@rm -f $(NAME) $(LIBFT_LIB)
 
 norme:
-	rm -f $(OBJ_FILES) $(NAME)
-	norminette $(SRC_FILES) $(H_FILES)
+	@rm -f $(OBJ_FILES) $(NAME)
+	@norminette $(SRC_FILES) $(H_FILES)
 	@cd $(LIBFT_DIR) && norminette
 
 update:

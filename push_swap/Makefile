@@ -1,57 +1,47 @@
-CC = cc
-CFLAGS = -Wall -Wextra -Werror -g -I include
+CC := gcc
+CFLAGS := -Wall -Wextra -Werror -g3
 
-SRC_DIR = srcs
-OBJ_DIR = obj
+INCDIR := include
+SRCDIR := srcs
+OBJDIR := objs
+LIBFTDIR := libft
+LIBFT := $(LIBFTDIR)/libft.a
 
-H_FILES = include/push_swap.h
+TARGET := push_swap
+SRC :=	$(SRCDIR)/push_swap.c \
+		$(SRCDIR)/stack.c \
+		$(SRCDIR)/parsing.c \
+		$(SRCDIR)/data.c \
+		$(SRCDIR)/action_a.c \
+		$(SRCDIR)/action_b.c \
+		$(SRCDIR)/data.c \
+		$(SRCDIR)/utils.c \
+		$(SRCDIR)/edge_case.c
 
-SRC_FILES = $(SRC_DIR)/compress.c \
-			$(SRC_DIR)/utils.c \
-			$(SRC_DIR)/binary_tools.c \
-			$(SRC_DIR)/args.c \
-			$(SRC_DIR)/actions.c \
-			$(SRC_DIR)/integrity.c \
-			$(SRC_DIR)/sort.c
+OBJ := $(SRC:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
 
+all: $(LIBFT) $(TARGET)
 
-OBJ_FILES = $(OBJ_DIR)/compress.o \
-			$(OBJ_DIR)/utils.o \
-			$(OBJ_DIR)/binary_tools.o \
-			$(OBJ_DIR)/args.o \
-			$(OBJ_DIR)/actions.o \
-			$(OBJ_DIR)/integrity.o \
-			$(OBJ_DIR)/sort.o
+$(TARGET): $(OBJ)
+	$(CC) $(CFLAGS) -I$(INCDIR) -I$(LIBFTDIR) -o $@ $^ $(LIBFT)
 
-NAME = push_swap
+$(OBJDIR)/%.o: $(SRCDIR)/%.c | $(OBJDIR)
+	$(CC) $(CFLAGS) -I$(INCDIR) -I$(LIBFTDIR) -c $< -o $@
 
-all: $(NAME)
+$(LIBFT):
+	$(MAKE) -C $(LIBFTDIR)
 
-$(NAME): $(OBJ_FILES)
-	$(CC) $(CFLAGS) -o $(NAME) $(OBJ_FILES)
-
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
-	@mkdir -p $(OBJ_DIR)
-	$(CC) $(CFLAGS) -c $< -o $@
+$(OBJDIR):
+	@mkdir -p $@
 
 clean:
-	rm -f $(OBJ_FILES)
+	@rm -rf $(OBJDIR)
+	$(MAKE) -C $(LIBFTDIR) clean
 
 fclean: clean
-	rm -f $(NAME)
-
-re: fclean all
-
-norme:
-	clear
-	norminette $(SRC_FILES) $(H_FILES)
-
-update:
-	git add .
-	git commit
-	git push
+	@rm -f $(TARGET)
+	$(MAKE) -C $(LIBFTDIR) fclean
 
 re: fclean all
 
 .PHONY: all clean fclean re
-

@@ -12,62 +12,40 @@
 
 #include "pipex.h"
 
-void	create_pipe(t_pipex *data)
+void	error_exit(char *str, int status)
 {
-	int i;
-
-	i = 0;
-	while (i < data->nb_cmd)
-	{
-		if (pipe(data->pipe_fd[i]) == -1)
-			error_exit("failed to create pipe", data);
-		i++;
-	}
+	ft_putstr_fd(str, 2);
+	perror("\nerrno");
+	exit(status);
 }
 
-void wait_pid(pid_t **pids, int nb_cmd)
+void	ft_norme(char **args, char *cmd, int status)
 {
-	int i;
-		
-	i = 0;
-	while (i < nb_cmd)
-	{	
-		waitpid((*pids)[i], NULL, 0);
-		i++;
-	}
+	if (args && *args)
+		free_args(args);
+	if (cmd != NULL)
+		free(cmd);
+	exit(status);
 }
 
-void	clean_data(t_pipex *data)
+void	handle_here_doc(int *fd, char *l)
 {
-	int i;
+	char	*l1;
 
-	if (!data)
-		return;
-
-	i = 0;
-	while (i < data->nb_cmd)
+	close(fd[0]);
+	while (get_next_line(&l1) > 0)
 	{
-		if (data->pipe_fd[i][0] >= 0)
-			close(data->pipe_fd[i][0]);
-		if (data->pipe_fd[i][1] >= 0)
-			close(data->pipe_fd[i][1]);
-		i++;
+		if (ft_strncmp(l1, l, ft_strlen(l)) == 0 && l1[ft_strlen(l)] == '\n')
+		{
+			free(l1);
+			close(fd[1]);
+			exit(EXIT_SUCCESS);
+		}
+		write(fd[1], l1, ft_strlen(l1));
+		write(fd[1], "\n", 1);
+		free(l1);
 	}
-	if (data->infile >= 0)
-		close(data->infile);
-	if (data->outfile >= 0)
-		close(data->outfile);
-}
-
-void	error_exit(char *str, t_pipex *data)
-{
-	clean_data(data);
-	if (data)
-	{
-		if (data->pids)
-			free(data->pids);
-		free(data);
-	}
-	perror(str);
+	close(fd[1]);
+	free(l1);
 	exit(EXIT_FAILURE);
 }

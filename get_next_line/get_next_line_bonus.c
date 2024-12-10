@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bdenfir <bdenfir@student.42.fr>            +#+  +:+       +#+        */
+/*   By: bdenfir <bdenfir@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/30 16:45:53 by bdenfir           #+#    #+#             */
-/*   Updated: 2024/10/02 14:04:08 by bdenfir          ###   ########.fr       */
+/*   Updated: 2024/11/20 16:13:12 by bdenfir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 char	*get_file(int fd, char *resultat)
 {
@@ -40,7 +40,7 @@ char	*get_file(int fd, char *resultat)
 	return (resultat);
 }
 
-char	*get_line(char *buffer)
+static char	*get_line(char *buffer)
 {
 	char	*line;
 	int		i;
